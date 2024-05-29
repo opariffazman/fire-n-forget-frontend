@@ -1,5 +1,8 @@
 # Redirect the root URL to the fire.html page
 / /fire 301
 
+# Redirect with a note ID parameter
+/forget/:noteId /forget?noteId=:noteId 301
+
 # Redirect any other request to a 404 page (optional)
 /* /404.html 404
