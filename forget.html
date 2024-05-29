@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forget</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <!-- Include Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Retrieve Note</h1>
+      <div class="response-container" style="display: none">
+        <div id="note-content"></div>
+        <button id="copy-button" onclick="copyContent()">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+      <div id="notification">Content copied to clipboard</div>
+    </div>
+
+    <script>
+      // Function to parse URL parameters
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href
+        name = name.replace(/[\[\]]/g, "\\$&")
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url)
+        if (!results) return null
+        if (!results[2]) return ""
+        return decodeURIComponent(results[2].replace(/\+/g, " "))
+      }
+
+      // Retrieve note ID from URL parameter
+      const baseUrl = "http://127.0.0.1:8787"
+      const noteId = getParameterByName("noteId")
+      if (noteId) {
+        // Fetch note content using note ID
+        fetch(`${baseUrl}/note/${noteId}`)
+          .then(response => {
+            if (response.ok) {
+              return response.json()
+            } else {
+              throw new Error("Failed to retrieve note.")
+            }
+          })
+          .then(data => {
+            const noteContent = data.content
+            document.getElementById("note-content").textContent = noteContent
+            document.querySelector(".response-container").style.display = "flex"
+            document.getElementById("copy-button").style.display = "inline" // Show the copy button
+          })
+          .catch(error => {
+            console.error("Error retrieving note:", error)
+            document.getElementById("note-content").textContent =
+              "Note not found or already read."
+            document.querySelector(".response-container").style.display = "flex"
+          })
+      } else {
+        document.getElementById("note-content").textContent =
+          "Note ID not found in URL."
+        document.querySelector(".response-container").style.display = "flex"
+      }
+
+      function copyContent() {
+        const noteContent = document.getElementById("note-content").textContent
+        navigator.clipboard
+          .writeText(noteContent)
+          .then(() => {
+            showNotification()
+          })
+          .catch(error => console.error("Error copying content:", error))
+      }
+
+      function showNotification() {
+        const notification = document.getElementById("notification")
+        notification.style.display = "block"
+        setTimeout(() => {
+          notification.style.display = "none"
+        }, 3000)
+      }
+    </script>
+  </body>
+</html>

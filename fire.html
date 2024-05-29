@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <!-- Include Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Create Note</h1>
+
+      <form id="create-note-form">
+        <textarea
+          id="note-content"
+          name="note-content"
+          placeholder="Enter Note Content"
+        ></textarea>
+        <button type="submit">Create Note</button>
+      </form>
+
+      <div class="response-container" style="display: none">
+        <div id="response-message"></div>
+        <button id="copy-button" onclick="copyContent()">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+      <div id="notification">Content copied to clipboard</div>
+    </div>
+
+    <script>
+      document
+        .getElementById("create-note-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault()
+
+          const content = document.getElementById("note-content").value.trim()
+          const baseUrl = "http://127.0.0.1:8787"
+
+          try {
+            const response = await fetch(`${baseUrl}/create`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content }),
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              const noteId = data.noteId
+              document.getElementById(
+                "response-message"
+              ).textContent = `${baseUrl}?noteId=${noteId}`
+              document.querySelector(".response-container").style.display =
+                "flex"
+            } else {
+              document.getElementById("response-message").textContent =
+                "Failed to create note."
+              document.querySelector(".response-container").style.display =
+                "flex"
+            }
+          } catch (error) {
+            console.error("Error creating note:", error)
+            document.getElementById("response-message").textContent =
+              "An error occurred while creating the note."
+            document.querySelector(".response-container").style.display = "flex"
+          }
+        })
+
+      function copyContent() {
+        const noteContent = document.getElementById("note-content").textContent
+        navigator.clipboard
+          .writeText(noteContent)
+          .then(() => {
+            showNotification()
+          })
+          .catch(error => console.error("Error copying content:", error))
+      }
+
+      function showNotification() {
+        const notification = document.getElementById("notification")
+        notification.style.display = "block"
+        setTimeout(() => {
+          notification.style.display = "none"
+        }, 3000)
+      }
+    </script>
+  </body>
+</html>
