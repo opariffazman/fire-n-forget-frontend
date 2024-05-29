@@ -56,7 +56,7 @@
               const noteId = data.noteId
               document.getElementById(
                 "response-message"
-              ).textContent = `${baseUrl}?noteId=${noteId}`
+              ).textContent = `${window.location.origin}?noteId=${noteId}`
               document.querySelector(".response-container").style.display =
                 "flex"
             } else {
@@ -74,7 +74,7 @@
         })
 
       function copyContent() {
-        const noteContent = document.getElementById("note-content").textContent
+        const noteContent = document.getElementById("response-message").textContent
         navigator.clipboard
           .writeText(noteContent)
           .then(() => {
