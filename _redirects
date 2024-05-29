@@ -1,14 +1,8 @@
 # Redirect the root URL to the fire.html page
-/ /fire.html 200
+/ /fire 301
 
-# Redirect /fire to the fire.html page
-/fire /fire.html 200
-
-# Redirect /forget to the forget.html page
-/forget /forget.html 200
-
-# Redirect with a note ID parameter
-/forget/:noteId /forget.html?noteId=:noteId 200
+# # Redirect with a note ID parameter
+# /forget/:noteId /forget.html?noteId=:noteId 200
 
 # Redirect any other request to a 404 page (optional)
 /* /404.html 404
